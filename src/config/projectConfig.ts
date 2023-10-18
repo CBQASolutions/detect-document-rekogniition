@@ -1,6 +1,7 @@
 // Used for Dynamo-Easy
 import 'reflect-metadata';
 import { LambdaLog } from 'lambda-log';
+import { DynamoDB } from '@aws-sdk/client-dynamodb';
 
 export const {
   REGION,
@@ -16,6 +17,8 @@ export const {
   DYNAMO_DB_TABLE_NAME,
   
 } = process.env
+
+export const dynamoDB = new DynamoDB({ region: REGION });
 
 
 // LambdaLog Global Configuration

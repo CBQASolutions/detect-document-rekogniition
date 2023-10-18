@@ -5,10 +5,9 @@ import {
   PartitionKey,
   SortKey,
 } from '@shiftcoders/dynamo-easy';
-import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { v4 as uuid } from 'uuid';
 
-import { DYNAMO_DB_TABLE_NAME, REGION } from '../config/projectConfig';
+import { DYNAMO_DB_TABLE_NAME, dynamoDB } from '../config/projectConfig';
 import {
   AnalysisStatuses,
   DynamoIndexes,
@@ -16,8 +15,6 @@ import {
   PKs,
   WebhookResponses,
 } from '../enums/JobEnums';
-
-export const dynamoDB = new DynamoDB({ region: REGION });
 
 @Model({ tableName: DYNAMO_DB_TABLE_NAME })
 export class JobModel {

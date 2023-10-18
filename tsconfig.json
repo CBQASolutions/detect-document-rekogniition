@@ -20,41 +20,6 @@
     "types": [
       "reflect-metadata"
     ],
-    "paths": {
-      "@api-interfaces/*": [
-        "src/api-interfaces/*"
-      ],
-      "@entities/*": [
-        "src/entities/*"
-      ],
-      "@enums/*": [
-        "src/enums/*"
-      ],
-      "@interfaces/*": [
-        "src/interfaces/*"
-      ],
-      "@controllers/*": [
-        "src/controllers/*"
-      ],
-      "@data/*": [
-        "src/data/*"
-      ],
-      "@handlers/*": [
-        "src/handlers/*"
-      ],
-      "@helpers/*": [
-        "src/helpers/*"
-      ],
-      "@validations/*": [
-        "src/validations/*"
-      ],
-      "@exceptions/*": [
-        "src/exceptions/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ]
-    },
     "rootDir": "./src",
   },
   "include": [
