@@ -5,11 +5,17 @@ import {
   PartitionKey,
   SortKey,
 } from '@shiftcoders/dynamo-easy';
+import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { v4 as uuid } from 'uuid';
 
-import { DYNAMO_DB_TABLE_NAME, REGION } from '@config/projectConfig';
-import { DynamoDB } from '@aws-sdk/client-dynamodb';
-import { AnalysisStatuses, DynamoIndexes, JobStatuses, PKs, WebhookResponses } from '@enums/JobEnums';
+import { DYNAMO_DB_TABLE_NAME, REGION } from '../config/projectConfig';
+import {
+  AnalysisStatuses,
+  DynamoIndexes,
+  JobStatuses,
+  PKs,
+  WebhookResponses,
+} from '../enums/JobEnums';
 
 export const dynamoDB = new DynamoDB({ region: REGION });
 

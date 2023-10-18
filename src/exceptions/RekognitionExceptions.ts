@@ -1,4 +1,4 @@
-import { StatusCodes } from "@enums/HttpEnums";
+import { StatusCodes } from '../enums/HttpEnums';
 import { BackendCustomException } from "./GeneralExceptions";
 
 /**

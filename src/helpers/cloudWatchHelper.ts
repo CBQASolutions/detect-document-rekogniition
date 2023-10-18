@@ -1,6 +1,6 @@
 import { CloudWatchClient, PutMetricDataCommand } from "@aws-sdk/client-cloudwatch";
-import { CloudWatchDimensionName, CloudWatchDimensionsUnit, CloudWatchMetricName, TrackedOperations } from "@enums/CloudWatchEnums";
-import { PROJECT_NAME, REGION, STAGE, logger } from "@config/projectConfig";
+import { CloudWatchDimensionName, CloudWatchDimensionsUnit, CloudWatchMetricName, TrackedOperations } from '../enums/CloudWatchEnums';
+import { PROJECT_NAME, REGION, STAGE, logger } from '../config/projectConfig';
 
 const cloudWatchClient = new CloudWatchClient({ region: REGION });
 

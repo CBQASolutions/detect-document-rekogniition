@@ -1,1 +1,1 @@
-export { detectDocument } from '@helpers/rekognitionHelper'
+export { detectDocument } from './helpers/rekognitionHelper'

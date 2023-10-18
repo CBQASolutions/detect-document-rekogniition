@@ -1,5 +1,5 @@
-import { StatusCodes } from "@enums/HttpEnums";
-import { BackendCustomException } from "@exceptions/GeneralExceptions";
+import { StatusCodes } from '../enums/HttpEnums';
+import { BackendCustomException } from '../exceptions/GeneralExceptions';
 
 export class JobUpdateException extends BackendCustomException {
   constructor(

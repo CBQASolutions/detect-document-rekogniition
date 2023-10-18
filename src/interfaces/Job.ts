@@ -1,4 +1,4 @@
-import { BackendCustomException } from "@exceptions/GeneralExceptions";
+import { BackendCustomException } from '../exceptions/GeneralExceptions';
 
 export interface TaskResult<T> {
   value: T;

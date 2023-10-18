@@ -1,4 +1,4 @@
-import { StatusCodes } from "src/enums/HttpEnums";
+import { StatusCodes } from '../enums/HttpEnums';
 
 export class BackendCustomException extends Error {
   public originalError: unknown;

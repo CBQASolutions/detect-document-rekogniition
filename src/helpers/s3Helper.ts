@@ -1,8 +1,9 @@
-import { JobModel, JobStore } from "@entities/JobModel";
-import { DynamoAttributes, PKs } from "@enums/JobEnums";
 import { UpdateExpressionDefinitionFunction, update } from "@shiftcoders/dynamo-easy";
-import { isNotEmptyProperty } from "@helpers/generalHelpers";
-import { JobUpdateException } from "@exceptions/JobExceptions";
+
+import { JobModel, JobStore } from '../entities/JobModel';
+import { DynamoAttributes, PKs } from '../enums/JobEnums';
+import { isNotEmptyProperty } from '../helpers/generalHelpers';
+import { JobUpdateException } from '../exceptions/JobExceptions';
 
 export async function updateJob(
   id: string,

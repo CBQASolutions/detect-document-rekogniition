@@ -15,8 +15,8 @@ import {
   REKOGNITION_MIN_TEXT_CONFIDENCE,
   S3_BUCKET_NAME,
   logger,
-} from '@config/projectConfig';
-import { TrackedOperations } from '@enums/CloudWatchEnums';
+} from '../config/projectConfig';
+import { TrackedOperations } from '../enums/CloudWatchEnums';
 import {
   AllowedINEPhrases,
   AllowedINEWords,
@@ -24,7 +24,7 @@ import {
   AllowedPassportWords,
   AllowedRekognitionLabels,
   DriversLicenceWords,
-} from '@enums/RekognitionEnums';
+} from '../enums/RekognitionEnums';
 import {
   LabelsDetectionException,
   LabelsInvalidDocumentException,
@@ -32,11 +32,11 @@ import {
   TextNotFoundException,
   TextNotValidException,
   TextVerificationException,
-} from '@exceptions/RekognitionExceptions';
-import { LabelConfidence, TaskResult } from '@interfaces/Job';
-import { increaseCloudWatchMetricCount } from '@helpers/cloudWatchHelper';
-import { BackendCustomException } from '@exceptions/GeneralExceptions';
-import { AnalysisStatuses, TextValidationResponse } from '@enums/JobEnums';
+} from '../exceptions/RekognitionExceptions';
+import { LabelConfidence, TaskResult } from '../interfaces/Job';
+import { increaseCloudWatchMetricCount } from '../helpers/cloudWatchHelper';
+import { BackendCustomException } from '../exceptions/GeneralExceptions';
+import { AnalysisStatuses, TextValidationResponse } from '../enums/JobEnums';
 import { updateJob } from './s3Helper';
 
 export const rekognitionClient = new Rekognition({
