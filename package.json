@@ -1,0 +1,25 @@
+{
+  "name": "detect-document-rekognition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.379.1",
+    "@aws-sdk/client-dynamodb": "^3.379.1",
+    "@aws-sdk/client-rekognition": "^3.379.1",
+    "@shiftcoders/dynamo-easy": "^8.0.0-next.3",
+    "lambda-log": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/lambda-log": "^3.0.2",
+    "@types/node": "^20.8.7",
+    "@types/uuid": "^9.0.5",
+    "typescript": "^5.2.2"
+  }
+}
