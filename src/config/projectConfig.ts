@@ -1,3 +1,5 @@
+// Used for Dynamo-Easy
+import 'reflect-metadata';
 import { LambdaLog } from 'lambda-log';
 
 export const {
