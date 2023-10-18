@@ -95,7 +95,6 @@ async function detectLabels(
 
     return { value: labelConfidences };
   } catch (error) {
-    logger.error(error as Error);
     if (error instanceof BackendCustomException) {
       return { value: labelConfidences, error };
     } else {
@@ -234,39 +233,44 @@ export async function detectDocument(
   value: { documentConfidence: number; analysisStatus: AnalysisStatuses };
   error?: BackendCustomException;
 }> {
-  let documentConfidence = 0;
-  let analysisStatus = AnalysisStatuses.DOCUMENT_ANALYSIS;
+  try {
+    let documentConfidence = 0;
+    let analysisStatus = AnalysisStatuses.DOCUMENT_ANALYSIS;
 
-  const labelConfidencesResult = await detectLabels(sourceImagesS3Path);
+    const labelConfidencesResult = await detectLabels(sourceImagesS3Path);
 
-  if (labelConfidencesResult.error) {
-    documentConfidence = +(
-      labelConfidencesResult.value
-        .find(({ value }) => value < REKOGNITION_MIN_DOCUMENT_CONFIDENCE)
-        ?.value.toFixed(2) ?? 0
+    if (labelConfidencesResult.error) {
+      documentConfidence = +(
+        labelConfidencesResult.value
+          .find(({ value }) => value < REKOGNITION_MIN_DOCUMENT_CONFIDENCE)
+          ?.value.toFixed(2) ?? 0
+      );
+
+      return {
+        value: { documentConfidence, analysisStatus },
+        error: labelConfidencesResult.error,
+      };
+    }
+
+    //Verify texts
+    analysisStatus = AnalysisStatuses.DOCUMENT_TYPE_ANALYSIS;
+    await updateJob(jobId, { analysisStatus });
+    const textValidationResponse = await verifyTextInImage(
+      sourceImagesS3Path as string
     );
 
-    return {
-      value: { documentConfidence, analysisStatus },
-      error: labelConfidencesResult.error,
-    };
+    documentConfidence = textValidationResponse.validity;
+
+    if (textValidationResponse.error) {
+      return {
+        value: { documentConfidence, analysisStatus },
+        error: labelConfidencesResult.error,
+      };
+    }
+
+    return { value: { documentConfidence, analysisStatus } };
+  } catch (error) {
+    logger.error(error as Error);
+    throw error;
   }
-
-  //Verify texts
-  analysisStatus = AnalysisStatuses.DOCUMENT_TYPE_ANALYSIS;
-  await updateJob(jobId, { analysisStatus });
-  const textValidationResponse = await verifyTextInImage(
-    sourceImagesS3Path as string
-  );
-
-  documentConfidence = textValidationResponse.validity;
-
-  if (textValidationResponse.error) {
-    return {
-      value: { documentConfidence, analysisStatus },
-      error: labelConfidencesResult.error,
-    };
-  }
-
-  return { value: { documentConfidence, analysisStatus } };
 }
