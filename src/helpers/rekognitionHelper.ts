@@ -227,13 +227,17 @@ function getValidity(minValidity: number): number {
   return +(Math.random() * (100 - min) + min).toFixed(2);
 }
 
-export async function detectDocument(sourceImagesS3Path: string, jobId: string) {
+export async function detectDocument(
+  sourceImagesS3Path: string,
+  jobId: string
+): Promise<{
+  value: { documentConfidence: number; analysisStatus: AnalysisStatuses };
+  error?: BackendCustomException;
+}> {
   let documentConfidence = 0;
-  let analysisStatus = AnalysisStatuses.DOCUMENT_ANALYSIS
+  let analysisStatus = AnalysisStatuses.DOCUMENT_ANALYSIS;
 
-  const labelConfidencesResult = await detectLabels(
-    sourceImagesS3Path
-  );
+  const labelConfidencesResult = await detectLabels(sourceImagesS3Path);
 
   if (labelConfidencesResult.error) {
     documentConfidence = +(
@@ -242,7 +246,10 @@ export async function detectDocument(sourceImagesS3Path: string, jobId: string) 
         ?.value.toFixed(2) ?? 0
     );
 
-    return { value: { documentConfidence, analysisStatus }, error: labelConfidencesResult.error }
+    return {
+      value: { documentConfidence, analysisStatus },
+      error: labelConfidencesResult.error,
+    };
   }
 
   //Verify texts
@@ -255,6 +262,11 @@ export async function detectDocument(sourceImagesS3Path: string, jobId: string) 
   documentConfidence = textValidationResponse.validity;
 
   if (textValidationResponse.error) {
-    return { value: { documentConfidence, analysisStatus }, error: labelConfidencesResult.error }
+    return {
+      value: { documentConfidence, analysisStatus },
+      error: labelConfidencesResult.error,
+    };
   }
+
+  return { value: { documentConfidence, analysisStatus } };
 }

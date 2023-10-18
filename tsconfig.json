@@ -18,8 +18,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": [
-      "reflect-metadata",
-      "jest"
+      "reflect-metadata"
     ],
     "paths": {
       "@api-interfaces/*": [
@@ -60,7 +59,6 @@
   },
   "include": [
     "src",
-    "test"
   ],
   "exclude": [
     "node_modules",
