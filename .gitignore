@@ -7,6 +7,7 @@ package-lock.json
 # Serverless directories
 .serverless
 .webpack
+dist
 
 # Enviroment
 env.yml
