@@ -16,7 +16,6 @@ import {
   S3_BUCKET_NAME,
   logger,
 } from '../config/projectConfig';
-import { TrackedOperations } from '../enums/CloudWatchEnums';
 import {
   AllowedINEPhrases,
   AllowedINEWords,
@@ -34,32 +33,29 @@ import {
   TextVerificationException,
 } from '../exceptions/RekognitionExceptions';
 import { LabelConfidence, TaskResult } from '../interfaces/Job';
-import { increaseCloudWatchMetricCount } from '../helpers/cloudWatchHelper';
 import { BackendCustomException } from '../exceptions/GeneralExceptions';
 import { AnalysisStatuses, TextValidationResponse } from '../enums/JobEnums';
-import { updateJob } from './s3Helper';
 
 export const rekognitionClient = new Rekognition({
   region: REGION,
 });
 
-async function detectLabels(
-  s3FileKey: string
+export async function detectLabels(
+  s3FileKey: string,
+  bucketName = S3_BUCKET_NAME
 ): Promise<TaskResult<LabelConfidence[]>> {
   const labelConfidences: LabelConfidence[] = [];
   try {
     const detectCustomLabelsInput: DetectLabelsCommandInput = {
       Image: {
         S3Object: {
-          Bucket: S3_BUCKET_NAME,
+          Bucket: bucketName,
           Name: s3FileKey,
         },
       },
     };
 
-    const { Labels } = await rekognitionClient.detectLabels(
-      detectCustomLabelsInput
-    );
+    const { Labels } = await rekognitionClient.detectLabels(detectCustomLabelsInput);
 
     if (!Labels) {
       throw new LabelsNotFoundException();
@@ -89,12 +85,10 @@ async function detectLabels(
     if (!areLabelsValid) {
       throw new LabelsInvalidDocumentException();
     }
-    await increaseCloudWatchMetricCount(
-      TrackedOperations.REKOGNITION_DETECT_LABELS
-    );
 
     return { value: labelConfidences };
   } catch (error) {
+    logger.error(error as Error);
     if (error instanceof BackendCustomException) {
       return { value: labelConfidences, error };
     } else {
@@ -103,18 +97,16 @@ async function detectLabels(
   }
 }
 
-async function verifyTextInImage(
-  fileKey: string
+export async function verifyTextInImage(
+  fileKey: string,
+  bucketName = S3_BUCKET_NAME
 ): Promise<TextValidationResponse & { error?: BackendCustomException }> {
-  await increaseCloudWatchMetricCount(
-    TrackedOperations.REKOGNITION_DETECT_TEXT
-  );
 
   try {
     const detectTextCommand = new DetectTextCommand({
       Image: {
         S3Object: {
-          Bucket: S3_BUCKET_NAME,
+          Bucket: bucketName,
           Name: fileKey,
         },
       },
@@ -196,7 +188,7 @@ async function verifyTextInImage(
   }
 }
 
-function areWordsValid<T>(
+export function areWordsValid<T>(
   toBeCheckedWords: TextDetection[],
   allowedWords: T[]
 ): number {
@@ -218,59 +210,10 @@ function areWordsValid<T>(
   return validity;
 }
 
-function getValidity(minValidity: number): number {
+export function getValidity(minValidity: number): number {
   let min = 90;
   if (minValidity < 90) {
     min = minValidity + 10;
   }
   return +(Math.random() * (100 - min) + min).toFixed(2);
-}
-
-export async function detectDocument(
-  sourceImagesS3Path: string,
-  jobId: string
-): Promise<{
-  value: { documentConfidence: number; analysisStatus: AnalysisStatuses };
-  error?: BackendCustomException;
-}> {
-  try {
-    let documentConfidence = 0;
-    let analysisStatus = AnalysisStatuses.DOCUMENT_ANALYSIS;
-
-    const labelConfidencesResult = await detectLabels(sourceImagesS3Path);
-
-    if (labelConfidencesResult.error) {
-      documentConfidence = +(
-        labelConfidencesResult.value
-          .find(({ value }) => value < REKOGNITION_MIN_DOCUMENT_CONFIDENCE)
-          ?.value.toFixed(2) ?? 0
-      );
-
-      return {
-        value: { documentConfidence, analysisStatus },
-        error: labelConfidencesResult.error,
-      };
-    }
-
-    //Verify texts
-    analysisStatus = AnalysisStatuses.DOCUMENT_TYPE_ANALYSIS;
-    await updateJob(jobId, { analysisStatus });
-    const textValidationResponse = await verifyTextInImage(
-      sourceImagesS3Path as string
-    );
-
-    documentConfidence = textValidationResponse.validity;
-
-    if (textValidationResponse.error) {
-      return {
-        value: { documentConfidence, analysisStatus },
-        error: labelConfidencesResult.error,
-      };
-    }
-
-    return { value: { documentConfidence, analysisStatus } };
-  } catch (error) {
-    logger.error(error as Error);
-    throw error;
-  }
 }

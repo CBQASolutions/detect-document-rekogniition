@@ -18,8 +18,6 @@ export const {
   
 } = process.env
 
-export const dynamoDB = new DynamoDB({ region: REGION });
-
 
 // LambdaLog Global Configuration
 export const logger = new LambdaLog({ debug: true });
